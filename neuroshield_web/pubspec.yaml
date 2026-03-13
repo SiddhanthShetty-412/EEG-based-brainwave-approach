@@ -1,0 +1,20 @@
+name: neuroshield_web
+description: A Flutter web UI template for the NeuroShield Brainwave Monitoring App.
+publish_to: 'none'
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+  flutter: '>=3.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  fl_chart: ^0.66.0
+  file_picker: ^6.1.1
+  http: ^1.2.0
+  provider: ^6.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

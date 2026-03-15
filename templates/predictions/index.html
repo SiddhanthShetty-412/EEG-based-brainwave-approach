@@ -1,0 +1,154 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NeuroShield — EEG Depression Detection</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <link href="{% static 'css/site.css' %}" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="#">NeuroShield</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+            <li class="nav-item"><a class="nav-link" href="#predict">Predict</a></li>
+            <li class="nav-item"><a class="nav-link" href="#reports">Reports</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero py-5 text-white text-center">
+      <div class="container">
+        <h1 class="display-5 fw-bold">EEG-based Mental Health Insights</h1>
+        <p class="lead mb-4">Upload EEG features or files and get quick, explainable predictions for depression risk.</p>
+        <a class="btn btn-lg btn-primary" href="#predict">Get Started</a>
+      </div>
+    </header>
+
+    <main class="container my-5">
+      <div class="row g-4">
+        <div class="col-lg-7" id="predict">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h4 class="card-title">Upload & Predict</h4>
+              <p class="text-muted">Supported inputs: CSV (v1.5) or EDF (v2). Single row/column with expected features.</p>
+
+              <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                <div class="mb-3">
+                  {{ form.as_p }}
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-success btn-lg">Upload and Predict</button>
+                  <a class="btn btn-outline-secondary" href="#">Example CSV</a>
+                </div>
+              </form>
+
+              {% if error %}
+                <div class="alert alert-danger mt-4">{{ error }}</div>
+              {% endif %}
+
+              {% if result or prediction_text %}
+                <div class="result-card mt-4 p-3 rounded shadow-sm bg-white">
+                  <h5 class="mb-2">Prediction</h5>
+                  <p class="mb-1"><strong>Label:</strong> {{ result.label|default:prediction_label }}</p>
+                  <p class="mb-1"><strong>Probability:</strong>
+                    {% if result.probability %}
+                      {{ result.probability }}
+                    {% elif probability %}
+                      {{ probability|floatformat:4 }}
+                    {% else %}
+                      N/A
+                    {% endif %}
+                  </p>
+                  {% if upload_id %}
+                    <p class="mb-0 text-muted small">Upload ID: {{ upload_id }}</p>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+            </div>
+          </div>
+        </div>
+
+        <aside class="col-lg-5" id="features">
+          <div class="card shadow-sm mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Why NeuroShield?</h5>
+              <ul class="list-unstyled ms-3">
+                <li>• Lightweight ML models for fast inference</li>
+                <li>• CSV and EDF support with feature extraction</li>
+                <li>• Report generation and comparison tools</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Feature Summary</h5>
+              {% if result.summary %}
+                <p class="mb-1"><strong>Count:</strong> {{ result.summary.feature_count }}</p>
+                <p class="mb-1"><strong>Mean:</strong> {{ result.summary.feature_mean }}</p>
+                <p class="mb-1"><strong>Std:</strong> {{ result.summary.feature_std }}</p>
+                <p class="mb-1"><strong>Min:</strong> {{ result.summary.feature_min }}</p>
+                <p class="mb-0"><strong>Max:</strong> {{ result.summary.feature_max }}</p>
+              {% else %}
+                <p class="text-muted">No summary available yet — upload a file to see statistics.</p>
+              {% endif %}
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <section id="reports" class="mt-5">
+        <h3 class="mb-3">Quick Links</h3>
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+          <div class="col">
+            <div class="card h-100">
+              <div class="card-body">
+                <h6 class="card-title">View Report</h6>
+                <p class="card-text">Open the detailed report for an upload ID.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card h-100">
+              <div class="card-body">
+                <h6 class="card-title">Compare Reports</h6>
+                <p class="card-text">Compare two uploads to understand differences.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card h-100">
+              <div class="card-body">
+                <h6 class="card-title">Ask Chat Agent</h6>
+                <p class="card-text">Use the chat API to ask questions about your EEG.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="py-4 bg-light text-center">
+      <div class="container small text-muted">© NeuroShield — Research prototype. Not a medical device.</div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -251,18 +251,18 @@ def api_upload(request):
         status="uploaded",
     )
 
+    try:
         try:
-            try:
-                from ml.inference import predict_from_edf, is_model_available, get_model_error
-            except Exception:
-                predict_from_edf = None
-                is_model_available = lambda: False
-                get_model_error = lambda: "import failed"
+            from ml.inference import predict_from_edf, is_model_available, get_model_error
+        except Exception:
+            predict_from_edf = None
+            is_model_available = lambda: False
+            get_model_error = lambda: "import failed"
 
-            if not is_model_available() or predict_from_edf is None:
-                raise RuntimeError(f"ML model not available: {get_model_error()}")
+        if not is_model_available() or predict_from_edf is None:
+            raise RuntimeError(f"ML model not available: {get_model_error()}")
 
-            pred = predict_from_edf(upload.file.path)
+        pred = predict_from_edf(upload.file.path)
 
         PredictionResult.objects.update_or_create(
             upload=upload,

@@ -26,7 +26,7 @@ class _UploadEEGPageState extends State<UploadEEGPage> {
   Future<void> uploadFile() async {
     if (pickedFile == null) return;
 
-    final uri = Uri.parse('http://localhost:8000/api/upload/');
+    final uri = Uri.parse('https://silver-space-spork-wr94q6wxxrrxf5xp-8000.app.github.dev/api/upload/');
     final request = http.MultipartRequest('POST', uri);
 
     if (pickedFile!.bytes != null) {
